@@ -1,4 +1,4 @@
-import React, { useRef, useEffect, useState, Children } from "react";
+import React, {useRef, useEffect, useState, Children} from 'react';
 import {
   StyleSheet,
   Text,
@@ -7,20 +7,20 @@ import {
   TextStyle,
   TextProps,
   I18nManager,
-} from "react-native";
+} from 'react-native';
 import Animated, {
   useAnimatedStyle,
   useSharedValue,
   withTiming,
-} from "react-native-reanimated";
+} from 'react-native-reanimated';
 
 const styles = StyleSheet.create({
   row: {
-    flexDirection: I18nManager.isRTL ? "row-reverse" : "row",
-    overflow: "hidden",
+    flexDirection: I18nManager.isRTL ? 'row-reverse' : 'row',
+    overflow: 'hidden',
   },
   hide: {
-    position: "absolute",
+    position: 'absolute',
     top: 0,
     left: 0,
     opacity: 0,
@@ -33,12 +33,25 @@ const uniq = (values: string[]) => {
   });
 };
 
-const range = (length: number) => Array.from({ length }, (x, i) => i);
-const splitText = (text = "") => (text + "").split("");
-const numberRange = range(10).map((p) => p + "");
-const numAdditional = [",", "."];
+const range = (length: number) => Array.from({length}, (x, i) => i);
+const splitText = (text = '') => (text + '').split('');
+const numberRange = range(10).map((p) => p + '');
+const numAdditional = [',', '.'];
 const numberItems = [...numberRange, ...numAdditional];
 const isNumber = (v: string) => !isNaN(parseInt(v));
+
+const getPosition = ({
+  text,
+  items,
+  height,
+}: {
+  text: string;
+  items: string[];
+  height: number;
+}) => {
+  const index = items.findIndex((p) => p === text);
+  return index * height * -1;
+};
 
 interface Props {
   duration?: number;
@@ -58,9 +71,9 @@ interface TickProps {
   measureMap: MeasureMap;
 }
 
-type MeasureMap = Record<string, { width: number; height: number }>;
+type MeasureMap = Record<string, {width: number; height: number}>;
 
-export const Tick = ({ ...props }: Partial<TickProps>) => {
+export const Tick = ({...props}: Partial<TickProps>) => {
   //@ts-ignore
   return <TickItem {...props} />;
 };
@@ -84,8 +97,8 @@ const TickItem = ({
   const randomizer = Math.floor(Math.random() * 4);
   const widthAnim = useAnimatedStyle(() => {
     return {
-      height: withTiming(measurement.height, { duration: 50 }),
-      width: withTiming(measurement.width, { duration: 50 }),
+      height: withTiming(measurement.height, {duration: 50}),
+      width: withTiming(measurement.width, {duration: 50}),
     };
   });
   const stylePos = useAnimatedStyle(() => {
@@ -101,14 +114,13 @@ const TickItem = ({
   });
 
   return (
-    <Animated.View style={[{ overflow: "hidden" }, widthAnim]}>
+    <Animated.View style={[{overflow: 'hidden'}, widthAnim]}>
       <Animated.View style={stylePos}>
         {rotateItems.map((v) => (
           <Text
             key={v}
             {...textProps}
-            style={[textStyle, { height: measurement.height }]}
-          >
+            style={[textStyle, {height: measurement.height}]}>
             {v}
           </Text>
         ))}
@@ -128,14 +140,14 @@ const Ticker = ({
 
   const measureMap = useRef<MeasureMap>({});
   const measureStrings: string[] = Children.map(children as any, (child) => {
-    if (typeof child === "string" || typeof child === "number") {
+    if (typeof child === 'string' || typeof child === 'number') {
       return splitText(`${child}`);
     } else if (child) {
       return child?.props && child?.props?.rotateItems;
     }
   }).reduce((acc, val) => acc.concat(val), []);
 
-  console.log("MEASURE: ", measureStrings);
+  console.log('MEASURE: ', measureStrings);
   const hasNumbers = measureStrings.find((v) => isNumber(v)) !== undefined;
   const rotateItems = uniq([
     ...(hasNumbers ? numberItems : []),
@@ -159,7 +171,7 @@ const Ticker = ({
     <View style={[styles.row, containerStyle]}>
       {measured === true &&
         Children.map(children, (child) => {
-          if (typeof child === "string" || typeof child === "number") {
+          if (typeof child === 'string' || typeof child === 'number') {
             return splitText(`${child}`).map((text, index) => {
               let items = isNumber(text) ? numberItems : [text];
               return (
@@ -169,14 +181,13 @@ const Ticker = ({
                   textStyle={textStyle}
                   textProps={textProps}
                   rotateItems={items}
-                  measureMap={measureMap.current}
-                >
+                  measureMap={measureMap.current}>
                   {text}
                 </TickItem>
               );
             });
           } else {
-            console.log("RETURNED CLONED ELEMENT");
+            console.log('RETURNED CLONED ELEMENT');
             //@ts-ignore
             return React.cloneElement(child, {
               duration,
@@ -187,14 +198,13 @@ const Ticker = ({
           }
         })}
       {rotateItems.map((v) => {
-        console.log("ROTATE ITEMS");
+        console.log('ROTATE ITEMS');
         return (
           <Text
             key={v}
             {...textProps}
             style={[textStyle, styles.hide]}
-            onLayout={(e) => handleMeasure(e, v)}
-          >
+            onLayout={(e) => handleMeasure(e, v)}>
             {v}
           </Text>
         );
