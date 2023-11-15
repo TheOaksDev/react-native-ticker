@@ -40,19 +40,6 @@ const numAdditional = [",", "."];
 const numberItems = [...numberRange, ...numAdditional];
 const isNumber = (v: string) => !isNaN(parseInt(v));
 
-const getPosition = ({
-  text,
-  items,
-  height,
-}: {
-  text: string;
-  items: string[];
-  height: number;
-}) => {
-  const index = items.findIndex((p) => p === text);
-  return index * height * -1;
-};
-
 interface Props {
   duration?: number;
   containerStyle?: ViewStyle;

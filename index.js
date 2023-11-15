@@ -32,11 +32,6 @@ const numAdditional = [",", "."];
 const numberItems = [...numberRange, ...numAdditional];
 const isNumber = (v) => !isNaN(parseInt(v));
 
-const getPosition = ({ text, items, height }) => {
-  const index = items.findIndex((p) => p === text);
-  return index * height * -1;
-};
-
 export const Tick = ({ ...props }) => {
   //@ts-ignore
   return <TickItem {...props} />;
@@ -101,9 +96,9 @@ const Ticker = ({
   textProps,
   children,
 }) => {
-  const [measured, setMeasured] = useState < boolean > false;
+  const [measured, setMeasured] = useState(false);
 
-  const measureMap = useRef < MeasureMap > {};
+  const measureMap = useRef({})
   const measureStrings = Children.map((child) => {
     if (typeof child === "string" || typeof child === "number") {
       return splitText(`${child}`);
@@ -112,7 +107,6 @@ const Ticker = ({
     }
   }).reduce((acc, val) => acc.concat(val), []);
 
-  console.log("MEASURE: ", measureStrings);
   const hasNumbers = measureStrings.find((v) => isNumber(v)) !== undefined;
   const rotateItems = uniq([
     ...(hasNumbers ? numberItems : []),
