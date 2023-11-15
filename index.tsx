@@ -8,7 +8,11 @@ import {
   TextProps,
   I18nManager,
 } from "react-native";
-import Animated, { EasingNode } from "react-native-reanimated";
+import Animated, {
+  useAnimatedStyle,
+  useSharedValue,
+  withTiming,
+} from "react-native-reanimated";
 
 const styles = StyleSheet.create({
   row: {
@@ -74,15 +78,6 @@ export const Tick = ({ ...props }: Partial<TickProps>) => {
   return <TickItem {...props} />;
 };
 
-const useInitRef = (cb: () => Animated.Value<number>) => {
-  const ref = useRef<Animated.Value<number>>();
-  if (!ref.current) {
-    ref.current = cb();
-  }
-
-  return ref.current;
-};
-
 const TickItem = ({
   children,
   duration,
@@ -92,48 +87,35 @@ const TickItem = ({
   rotateItems,
 }: TickProps) => {
   const measurement = measureMap[children];
-
-  const position = getPosition({
-    text: children,
-    height: measurement.height,
-    items: rotateItems,
-  });
-
-  const widthAnim = useInitRef(() => new Animated.Value(measurement.width));
-  const stylePos = useInitRef(() => new Animated.Value(position));
+  const position = useSharedValue(0);
 
   useEffect(() => {
-    if (stylePos) {
-      Animated.timing(stylePos, {
-        toValue: position,
-        duration,
-        easing: EasingNode.linear,
-      }).start();
-      Animated.timing(widthAnim, {
-        toValue: measurement.width,
-        duration: 25,
-        easing: EasingNode.linear,
-      }).start();
-    }
-  }, [position, measurement]);
+    position.value =
+      rotateItems.findIndex((p) => p === children) * measurement.height * -1;
+  }, [children]);
+
+  const randomizer = Math.floor(Math.random() * 4);
+  const widthAnim = useAnimatedStyle(() => {
+    return {
+      height: withTiming(measurement.height, { duration: 50 }),
+      width: withTiming(measurement.width, { duration: 50 }),
+    };
+  });
+  const stylePos = useAnimatedStyle(() => {
+    return {
+      transform: [
+        {
+          translateY: withTiming(position.value, {
+            duration: 1000 + randomizer * duration,
+          }),
+        },
+      ],
+    };
+  });
 
   return (
-    <Animated.View
-      style={[
-        {
-          height: measurement.height,
-          width: widthAnim,
-          overflow: "hidden",
-        },
-      ]}
-    >
-      <Animated.View
-        style={[
-          {
-            transform: [{ translateY: stylePos }],
-          },
-        ]}
-      >
+    <Animated.View style={[{ overflow: "hidden" }, widthAnim]}>
+      <Animated.View style={stylePos}>
         {rotateItems.map((v) => (
           <Text
             key={v}
@@ -148,7 +130,13 @@ const TickItem = ({
   );
 };
 
-const Ticker = ({ duration = 250, containerStyle, textStyle, textProps, children }: Props) => {
+const Ticker = ({
+  duration = 250,
+  containerStyle,
+  textStyle,
+  textProps,
+  children,
+}: Props) => {
   const [measured, setMeasured] = useState<boolean>(false);
 
   const measureMap = useRef<MeasureMap>({});
@@ -160,6 +148,7 @@ const Ticker = ({ duration = 250, containerStyle, textStyle, textProps, children
     }
   }).reduce((acc, val) => acc.concat(val), []);
 
+  console.log("MEASURE: ", measureStrings);
   const hasNumbers = measureStrings.find((v) => isNumber(v)) !== undefined;
   const rotateItems = uniq([
     ...(hasNumbers ? numberItems : []),
@@ -200,6 +189,7 @@ const Ticker = ({ duration = 250, containerStyle, textStyle, textProps, children
               );
             });
           } else {
+            console.log("RETURNED CLONED ELEMENT");
             //@ts-ignore
             return React.cloneElement(child, {
               duration,
@@ -210,6 +200,7 @@ const Ticker = ({ duration = 250, containerStyle, textStyle, textProps, children
           }
         })}
       {rotateItems.map((v) => {
+        console.log("ROTATE ITEMS");
         return (
           <Text
             key={v}
@@ -225,8 +216,8 @@ const Ticker = ({ duration = 250, containerStyle, textStyle, textProps, children
   );
 };
 
-Ticker.defaultProps = {
-  duration: 250,
-};
+// Ticker.defaultProps = {
+//   duration: 250,
+// };
 
 export default Ticker;
