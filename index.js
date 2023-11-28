@@ -15,7 +15,7 @@ var __rest =
       }
     return t;
   };
-import React, { useRef, useEffect, useState, Children } from "react";
+import React, { useEffect, useState, Children } from "react";
 import {
   StyleSheet,
   Text,
@@ -121,7 +121,7 @@ const Ticker = ({
   children,
 }) => {
   const [measured, setMeasured] = useState(false);
-  const measureMap = useRef({});
+  const measureMap = useSharedValue({});
   const measureStrings = Children.map(children, (child) => {
     var _a;
     if (typeof child === "string" || typeof child === "number") {
@@ -142,12 +142,12 @@ const Ticker = ({
     ...measureStrings,
   ]);
   const handleMeasure = (e, v) => {
-    if (!measureMap.current) return;
-    measureMap.current[v] = {
+    if (!measureMap.value) return;
+    measureMap.value[v] = {
       width: e.nativeEvent.layout.width,
       height: e.nativeEvent.layout.height,
     };
-    if (Object.keys(measureMap.current).length === rotateItems.length) {
+    if (Object.keys(measureMap.value).length === rotateItems.length) {
       setMeasured(true);
     }
   };
@@ -165,7 +165,7 @@ const Ticker = ({
                   textStyle={textStyle}
                   textProps={textProps}
                   rotateItems={items}
-                  measureMap={measureMap.current}
+                  measureMap={measureMap.value}
                 >
                   {text}
                 </TickItem>
@@ -177,7 +177,7 @@ const Ticker = ({
               duration,
               textStyle,
               textProps,
-              measureMap: measureMap.current,
+              measureMap: measureMap.value,
             });
           }
         })}

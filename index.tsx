@@ -1,4 +1,4 @@
-import React, { useRef, useEffect, useState, Children } from "react";
+import React, { useEffect, useState, Children } from "react";
 import {
   StyleSheet,
   Text,
@@ -143,8 +143,7 @@ const Ticker = ({
   children,
 }: Props) => {
   const [measured, setMeasured] = useState<boolean>(false);
-
-  const measureMap = useRef<MeasureMap>({});
+  const measureMap = useSharedValue<MeasureMap>({});
   const measureStrings: string[] = Children.map(children as any, (child) => {
     if (typeof child === "string" || typeof child === "number") {
       return splitText(`${child}`);
@@ -161,14 +160,14 @@ const Ticker = ({
   ]);
 
   const handleMeasure = (e: any, v: string) => {
-    if (!measureMap.current) return;
+    if (!measureMap.value) return;
 
-    measureMap.current[v] = {
+    measureMap.value[v] = {
       width: e.nativeEvent.layout.width,
       height: e.nativeEvent.layout.height,
     };
 
-    if (Object.keys(measureMap.current).length === rotateItems.length) {
+    if (Object.keys(measureMap.value).length === rotateItems.length) {
       setMeasured(true);
     }
   };
@@ -187,7 +186,7 @@ const Ticker = ({
                   textStyle={textStyle}
                   textProps={textProps}
                   rotateItems={items}
-                  measureMap={measureMap.current}
+                  measureMap={measureMap.value}
                 >
                   {text}
                 </TickItem>
@@ -200,7 +199,7 @@ const Ticker = ({
               duration,
               textStyle,
               textProps,
-              measureMap: measureMap.current,
+              measureMap: measureMap.value,
             });
           }
         })}
@@ -220,9 +219,5 @@ const Ticker = ({
     </View>
   );
 };
-
-// Ticker.defaultProps = {
-//   duration: 250,
-// };
 
 export default Ticker;
