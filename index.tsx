@@ -1,4 +1,4 @@
-import React, { useEffect, useState, Children } from "react";
+import React, { useRef, useEffect, useState, Children } from "react";
 import {
   StyleSheet,
   Text,
@@ -143,7 +143,7 @@ const Ticker = ({
   children,
 }: Props) => {
   const [measured, setMeasured] = useState<boolean>(false);
-  const measureMap = useSharedValue<MeasureMap>({});
+  const measureMap = useRef<MeasureMap>({});
   const measureStrings: string[] = Children.map(children as any, (child) => {
     if (typeof child === "string" || typeof child === "number") {
       return splitText(`${child}`);
@@ -160,21 +160,21 @@ const Ticker = ({
   ]);
 
   const handleMeasure = (e: any, v: string) => {
-    if (!measureMap.value) return;
+    if (!measureMap.current) return;
 
-    measureMap.value[v] = {
+    measureMap.current[v] = {
       width: e.nativeEvent.layout.width,
       height: e.nativeEvent.layout.height,
     };
 
-    if (Object.keys(measureMap.value).length === rotateItems.length) {
+    if (Object.keys(measureMap.current).length === rotateItems.length) {
       setMeasured(true);
     }
   };
 
   return (
     <View style={[styles.row, containerStyle]}>
-      {measured === true &&
+      {measured === true ?
         Children.map(children, (child) => {
           if (typeof child === "string" || typeof child === "number") {
             return splitText(`${child}`).map((text, index) => {
@@ -186,7 +186,7 @@ const Ticker = ({
                   textStyle={textStyle}
                   textProps={textProps}
                   rotateItems={items}
-                  measureMap={measureMap.value}
+                  measureMap={measureMap.current}
                 >
                   {text}
                 </TickItem>
@@ -199,10 +199,14 @@ const Ticker = ({
               duration,
               textStyle,
               textProps,
-              measureMap: measureMap.value,
+              measureMap: measureMap.current,
             });
           }
-        })}
+        }) : (
+          <Text key={children} {...textProps} style={[textStyle]}>
+            {children.replace(/[0-9]/g, "0")}
+          </Text>
+        )}
       {rotateItems.map((v) => {
         console.log("ROTATE ITEMS");
         return (

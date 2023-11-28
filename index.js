@@ -121,7 +121,7 @@ const Ticker = ({
   children,
 }) => {
   const [measured, setMeasured] = useState(false);
-  const measureMap = useSharedValue({});
+  const measureMap = useRef({});
   const measureStrings = Children.map(children, (child) => {
     var _a;
     if (typeof child === "string" || typeof child === "number") {
@@ -142,18 +142,18 @@ const Ticker = ({
     ...measureStrings,
   ]);
   const handleMeasure = (e, v) => {
-    if (!measureMap.value) return;
-    measureMap.value[v] = {
+    if (!measureMap.current) return;
+    measureMap.current[v] = {
       width: e.nativeEvent.layout.width,
       height: e.nativeEvent.layout.height,
     };
-    if (Object.keys(measureMap.value).length === rotateItems.length) {
+    if (Object.keys(measureMap.current).length === rotateItems.length) {
       setMeasured(true);
     }
   };
   return (
     <View style={[styles.row, containerStyle]}>
-      {measured === true &&
+      {measured === true ? (
         Children.map(children, (child) => {
           if (typeof child === "string" || typeof child === "number") {
             return splitText(`${child}`).map((text, index) => {
@@ -165,7 +165,7 @@ const Ticker = ({
                   textStyle={textStyle}
                   textProps={textProps}
                   rotateItems={items}
-                  measureMap={measureMap.value}
+                  measureMap={measureMap.current}
                 >
                   {text}
                 </TickItem>
@@ -177,10 +177,15 @@ const Ticker = ({
               duration,
               textStyle,
               textProps,
-              measureMap: measureMap.value,
+              measureMap: measureMap.current,
             });
           }
-        })}
+        })
+      ) : (
+        <Text key={children} {...textProps} style={[textStyle]}>
+          {children.replace(/[0-9]/g, "0")}
+        </Text>
+      )}
       {rotateItems.map((v) => {
         return (
           <Text
