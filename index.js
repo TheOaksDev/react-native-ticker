@@ -15,7 +15,7 @@ var __rest =
       }
     return t;
   };
-import React, { useEffect, useState, Children } from "react";
+import React, { useRef, useEffect, useState, Children } from "react";
 import {
   StyleSheet,
   Text,
