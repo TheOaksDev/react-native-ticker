@@ -68,7 +68,6 @@ const TickItem = ({
 }) => {
   const measurement = measureMap[children];
   const position = useSharedValue(0);
-  const timeoutRef = useRef(null);
 
   useEffect(() => {
     const interactionPromise = InteractionManager.runAfterInteractions(() => {
@@ -123,6 +122,8 @@ const Ticker = ({
 }) => {
   const [measured, setMeasured] = useState(false);
   const measureMap = useRef({});
+  const timeoutRef = useRef(null);
+
   const measureStrings = Children.map(children, (child) => {
     var _a;
     if (typeof child === "string" || typeof child === "number") {
@@ -156,7 +157,7 @@ const Ticker = ({
   };
 
   useEffect(() => {
-    return clearTimeout(timeoutRef);
+    return clearTimeout(timeoutRef.current);
   }, []);
 
   return (

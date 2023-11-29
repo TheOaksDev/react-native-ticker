@@ -176,7 +176,7 @@ const Ticker = ({
   };
 
   useEffect(() => {
-    return clearTimeout(timeoutRef);
+    return clearTimeout(timeoutRef.current);
   }, []);
 
   return (
