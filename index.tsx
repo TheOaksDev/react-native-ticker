@@ -111,7 +111,7 @@ const TickItem = ({
       transform: [
         {
           translateY: withTiming(position.value, {
-            duration: 1000 + randomizer * duration,
+            duration: randomizer * duration,
           }),
         },
       ],
@@ -136,7 +136,7 @@ const TickItem = ({
 };
 
 const Ticker = ({
-  duration = 250,
+  duration = 1000,
   containerStyle,
   textStyle,
   textProps,

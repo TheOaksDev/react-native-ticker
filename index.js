@@ -60,7 +60,7 @@ export const Tick = (_a) => {
 
 const TickItem = ({
   children,
-  duration = 200,
+  duration = 1000,
   textStyle,
   textProps,
   measureMap,
@@ -78,7 +78,7 @@ const TickItem = ({
     return () => interactionPromise.cancel();
   }, [children]);
 
-  const randomizer = Math.floor(Math.random() * 4);
+  const randomizer = Math.floor(Math.random() * 4 + 100);
   const widthAnim = useAnimatedStyle(() => {
     return {
       height: withTiming(measurement.height, { duration: 50 }),
@@ -90,7 +90,7 @@ const TickItem = ({
       transform: [
         {
           translateY: withTiming(position.value, {
-            duration: 1000 + randomizer * duration,
+            duration: randomizer * duration,
           }),
         },
       ],
@@ -114,7 +114,7 @@ const TickItem = ({
   );
 };
 const Ticker = ({
-  duration = 250,
+  duration = 1000,
   containerStyle,
   textStyle,
   textProps,
@@ -200,8 +200,5 @@ const Ticker = ({
       })}
     </View>
   );
-};
-Ticker.defaultProps = {
-  duration: 250,
 };
 export default Ticker;
