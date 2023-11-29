@@ -191,9 +191,17 @@ const Ticker = ({
           }
         })
       ) : (
-        <Text key={children} {...textProps} style={[textStyle]}>
-          {children.replace(/[0-9]/g, "0")}
-        </Text>
+        <>
+          {children.split('').map((child, index) => {
+            let key = (Math.random() + 1).toString(36).substring(7);
+            return (
+              <Text key={key} {...textProps} style={[textStyle, {paddingHorizontal: 0.15}]}>
+                {child}
+              </Text>
+            )
+          }
+          )}
+        </>
       )}
       {rotateItems.map((v) => {
         return (
