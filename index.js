@@ -68,6 +68,7 @@ const TickItem = ({
 }) => {
   const measurement = measureMap[children];
   const position = useSharedValue(0);
+  const timeoutRef = useRef(null);
 
   useEffect(() => {
     const interactionPromise = InteractionManager.runAfterInteractions(() => {
@@ -148,9 +149,16 @@ const Ticker = ({
       height: e.nativeEvent.layout.height,
     };
     if (Object.keys(measureMap.current).length === rotateItems.length) {
-      setMeasured(true);
+      timeoutRef.current = setTimeout(() => {
+        setMeasured(true);
+      }, 1500);
     }
   };
+
+  useEffect(() => {
+    return clearTimeout(timeoutRef);
+  }, []);
+
   return (
     <View style={[styles.row, containerStyle]}>
       {measured === true ? (

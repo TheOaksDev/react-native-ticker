@@ -136,7 +136,7 @@ const TickItem = ({
 };
 
 const Ticker = ({
-  duration = 1000,
+  duration,
   containerStyle,
   textStyle,
   textProps,
@@ -144,6 +144,8 @@ const Ticker = ({
 }: Props) => {
   const [measured, setMeasured] = useState<boolean>(false);
   const measureMap = useRef<MeasureMap>({});
+  const timeoutRef = useRef(null);
+
   const measureStrings: string[] = Children.map(children as any, (child) => {
     if (typeof child === "string" || typeof child === "number") {
       return splitText(`${child}`);
@@ -152,7 +154,6 @@ const Ticker = ({
     }
   }).reduce((acc, val) => acc.concat(val), []);
 
-  console.log("MEASURE: ", measureStrings);
   const hasNumbers = measureStrings.find((v) => isNumber(v)) !== undefined;
   const rotateItems = uniq([
     ...(hasNumbers ? numberItems : []),
@@ -168,13 +169,19 @@ const Ticker = ({
     };
 
     if (Object.keys(measureMap.current).length === rotateItems.length) {
-      setMeasured(true);
+      timeoutRef.current = setTimeout(() => {
+        setMeasured(true);
+      }, 1500);
     }
   };
 
+  useEffect(() => {
+    return clearTimeout(timeoutRef);
+  }, []);
+
   return (
     <View style={[styles.row, containerStyle]}>
-      {measured === true ?
+      {measured === true ? (
         Children.map(children, (child) => {
           if (typeof child === "string" || typeof child === "number") {
             return splitText(`${child}`).map((text, index) => {
@@ -202,11 +209,12 @@ const Ticker = ({
               measureMap: measureMap.current,
             });
           }
-        }) : (
-          <Text key={children} {...textProps} style={[textStyle]}>
-            {children.replace(/[0-9]/g, "0")}
-          </Text>
-        )}
+        })
+      ) : (
+        <Text key={children} {...textProps} style={[textStyle]}>
+          {children.replace(/[0-9]/g, "0")}
+        </Text>
+      )}
       {rotateItems.map((v) => {
         console.log("ROTATE ITEMS");
         return (
