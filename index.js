@@ -196,7 +196,7 @@ const Ticker = ({
             let key = (Math.random() + 1).toString(36).substring(7);
             return (
               <Text key={key} {...textProps} style={[textStyle, {paddingHorizontal: 0.15}]}>
-                {child}
+                {child.replace(/[0-9]/g, "0")}
               </Text>
             )
           }
