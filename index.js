@@ -60,7 +60,7 @@ export const Tick = (_a) => {
 
 const TickItem = ({
   children,
-  duration = 1000,
+  duration,
   textStyle,
   textProps,
   measureMap,
@@ -114,7 +114,7 @@ const TickItem = ({
   );
 };
 const Ticker = ({
-  duration = 1000,
+  duration,
   containerStyle,
   textStyle,
   textProps,
