@@ -78,7 +78,7 @@ const TickItem = ({
     return () => interactionPromise.cancel();
   }, [children]);
 
-  const randomizer = Math.floor(Math.random() * 4 + 100);
+  const randomizer = Math.floor(Math.random() * 4);
   const widthAnim = useAnimatedStyle(() => {
     return {
       height: withTiming(measurement.height, { duration: 50 }),
