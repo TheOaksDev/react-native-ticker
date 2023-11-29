@@ -220,14 +220,13 @@ const Ticker = ({
                 {...textProps}
                 style={[textStyle, { paddingHorizontal: 0.15 }]}
               >
-                {child}
+                {child.replace(/[0-9]/g, "0")}
               </Text>
             );
           })}
         </>
       )}
       {rotateItems.map((v) => {
-        console.log("ROTATE ITEMS");
         return (
           <Text
             key={v}
