@@ -99,7 +99,7 @@ const TickItem = ({
     return () => interactionPromise.cancel();
   }, [children]);
 
-  const randomizer = Math.floor(Math.random() * 4);
+  const randomizer = Math.floor(Math.random() * 2) + 1;
   const widthAnim = useAnimatedStyle(() => {
     return {
       height: withTiming(measurement.height, { duration: 50 }),
