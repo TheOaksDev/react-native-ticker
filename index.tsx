@@ -37,22 +37,9 @@ const uniq = (values: string[]) => {
 const range = (length: number) => Array.from({ length }, (x, i) => i);
 const splitText = (text = "") => (text + "").split("");
 const numberRange = range(10).map((p) => p + "");
-const numAdditional = [",", "."];
+const numAdditional = [",", ".", "k", "M", "G", "T", "P", "E"];
 const numberItems = [...numberRange, ...numAdditional];
 const isNumber = (v: string) => !isNaN(parseInt(v));
-
-const getPosition = ({
-  text,
-  items,
-  height,
-}: {
-  text: string;
-  items: string[];
-  height: number;
-}) => {
-  const index = items.findIndex((p) => p === text);
-  return index * height * -1;
-};
 
 interface Props {
   duration?: number;
@@ -78,6 +65,8 @@ export const Tick = ({ ...props }: Partial<TickProps>) => {
   //@ts-ignore
   return <TickItem {...props} />;
 };
+
+const AnimatedText = Animated.createAnimatedComponent(Text);
 
 const TickItem = ({
   children,
@@ -117,18 +106,21 @@ const TickItem = ({
       ],
     };
   });
+  const heightStyle = useAnimatedStyle(() => {
+    if (measurement.height) {
+      return { height: measurement.height };
+    }
+
+    return { heigth: 0 };
+  });
 
   return (
     <Animated.View style={[{ overflow: "hidden" }, widthAnim]}>
       <Animated.View style={stylePos}>
         {rotateItems.map((v) => (
-          <Text
-            key={v}
-            {...textProps}
-            style={[textStyle, { height: measurement.height }]}
-          >
+          <AnimatedText key={v} {...textProps} style={[textStyle, heightStyle]}>
             {v}
-          </Text>
+          </AnimatedText>
         ))}
       </Animated.View>
     </Animated.View>

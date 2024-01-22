@@ -48,7 +48,7 @@ const uniq = (values) => {
 const range = (length) => Array.from({ length }, (x, i) => i);
 const splitText = (text = "") => (text + "").split("");
 const numberRange = range(10).map((p) => p + "");
-const numAdditional = [",", "."];
+const numAdditional = [",", ".", "k", "M", "G", "T", "P", "E"];
 const numberItems = [...numberRange, ...numAdditional];
 const isNumber = (v) => !isNaN(parseInt(v));
 
@@ -57,6 +57,8 @@ export const Tick = (_a) => {
   //@ts-ignore
   return <TickItem {...props} />;
 };
+
+const AnimatedText = Animated.createAnimatedComponent(Text);
 
 const TickItem = ({
   children,
@@ -96,18 +98,21 @@ const TickItem = ({
       ],
     };
   });
+  const heightStyle = useAnimatedStyle(() => {
+    if (measurement.height) {
+      return { height: measurement.height };
+    }
+
+    return { heigth: 0 };
+  });
 
   return (
     <Animated.View style={[{ overflow: "hidden" }, widthAnim]}>
       <Animated.View style={stylePos}>
         {rotateItems.map((v) => (
-          <Text
-            key={v}
-            {...textProps}
-            style={[textStyle, { height: measurement.height }]}
-          >
+          <AnimatedText key={v} {...textProps} style={[textStyle, heightStyle]}>
             {v}
-          </Text>
+          </AnimatedText>
         ))}
       </Animated.View>
     </Animated.View>
@@ -192,15 +197,18 @@ const Ticker = ({
         })
       ) : (
         <>
-          {children.split('').map((child, index) => {
+          {children.split("").map((child, index) => {
             let key = (Math.random() + 1).toString(36).substring(7);
             return (
-              <Text key={key} {...textProps} style={[textStyle, {paddingHorizontal: 0.15}]}>
+              <Text
+                key={key}
+                {...textProps}
+                style={[textStyle, { paddingHorizontal: 0.15 }]}
+              >
                 {child.replace(/[0-9]/g, "0")}
               </Text>
-            )
-          }
-          )}
+            );
+          })}
         </>
       )}
       {rotateItems.map((v) => {
