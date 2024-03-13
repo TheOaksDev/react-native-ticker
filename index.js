@@ -105,7 +105,7 @@ const TickItem = ({
       return { height: measurement.height };
     }
 
-    return { heigth: 0 };
+    return { height: 0 };
   });
 
   return (
