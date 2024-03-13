@@ -68,13 +68,15 @@ const TickItem = ({
   measureMap,
   rotateItems,
 }) => {
-  const measurement = measureMap[children];
+  const measurement = measureMap[children] || { height: 0, width: 0 };
   const position = useSharedValue(0);
 
   useEffect(() => {
     const interactionPromise = InteractionManager.runAfterInteractions(() => {
       position.value =
-        rotateItems.findIndex((p) => p === children) * measurement.height * -1;
+        rotateItems.findIndex((p) => p === children) *
+        (measurement?.height || 0) *
+        -1;
     });
 
     return () => interactionPromise.cancel();
@@ -83,8 +85,8 @@ const TickItem = ({
   const randomizer = Math.floor(Math.random() * 2) + 1;
   const widthAnim = useAnimatedStyle(() => {
     return {
-      height: withTiming(measurement.height || 0, { duration: 50 }),
-      width: withTiming(measurement.width || 0, { duration: 50 }),
+      height: withTiming(measurement?.height || 0, { duration: 50 }),
+      width: withTiming(measurement?.width || 0, { duration: 50 }),
     };
   });
   const stylePos = useAnimatedStyle(() => {

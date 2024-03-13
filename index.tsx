@@ -76,13 +76,15 @@ const TickItem = ({
   measureMap,
   rotateItems,
 }: TickProps) => {
-  const measurement = measureMap[children];
+  const measurement = measureMap[children] || { height: 0, width: 0 };
   const position = useSharedValue(0);
 
   useEffect(() => {
     const interactionPromise = InteractionManager.runAfterInteractions(() => {
       position.value =
-        rotateItems.findIndex((p) => p === children) * measurement.height * -1;
+        rotateItems.findIndex((p) => p === children) *
+        (measurement?.height || 0) *
+        -1;
     });
 
     return () => interactionPromise.cancel();
