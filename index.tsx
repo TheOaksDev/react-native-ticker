@@ -91,8 +91,8 @@ const TickItem = ({
   const randomizer = Math.floor(Math.random() * 2) + 1;
   const widthAnim = useAnimatedStyle(() => {
     return {
-      height: withTiming(measurement.height, { duration: 50 }),
-      width: withTiming(measurement.width, { duration: 50 }),
+      height: withTiming(measurement.height || 0, { duration: 50 }),
+      width: withTiming(measurement.width || 0, { duration: 50 }),
     };
   });
   const stylePos = useAnimatedStyle(() => {
