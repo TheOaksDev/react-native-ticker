@@ -37,7 +37,7 @@ const uniq = (values: string[]) => {
 const range = (length: number) => Array.from({ length }, (x, i) => i);
 const splitText = (text = "") => (text + "").split("");
 const numberRange = range(10).map((p) => p + "");
-const numAdditional = [",", ".", "k", "M", "G", "T", "P", "E"];
+const numAdditional = ["-", ",", ".", "k", "M", "G", "T", "P", "E"];
 const numberItems = [...numberRange, ...numAdditional];
 const isNumber = (v: string) => !isNaN(parseInt(v));
 
