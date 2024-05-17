@@ -125,6 +125,7 @@ const Ticker = ({
   containerStyle,
   textStyle,
   textProps,
+  accessibilityLabel,
   children,
 }) => {
   const [measured, setMeasured] = useState(false);
@@ -168,7 +169,7 @@ const Ticker = ({
   }, []);
 
   return (
-    <View style={[styles.row, containerStyle]}>
+    <View style={[styles.row, containerStyle]} accessibilityLabel={accessibilityLabel}>
       {measured === true ? (
         Children.map(children, (child) => {
           if (typeof child === "string" || typeof child === "number") {

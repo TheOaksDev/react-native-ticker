@@ -47,6 +47,7 @@ interface Props {
   textStyle?: TextStyle;
   textProps?: TextProps;
   additionalDisplayItems?: string[];
+  accessibilityLabel?: string;
   children: React.ReactNode;
 }
 
@@ -134,6 +135,7 @@ const Ticker = ({
   containerStyle,
   textStyle,
   textProps,
+  accessibilityLabel,
   children,
 }: Props) => {
   const [measured, setMeasured] = useState<boolean>(false);
@@ -174,7 +176,7 @@ const Ticker = ({
   }, []);
 
   return (
-    <View style={[styles.row, containerStyle]}>
+    <View style={[styles.row, containerStyle]} accessibilityLabel={accessibilityLabel}>
       {measured === true ? (
         Children.map(children, (child) => {
           if (typeof child === "string" || typeof child === "number") {
